@@ -10,17 +10,18 @@ class Passenger extends Model
     use HasFactory;
 
     // Define the fields that are mass assignable
-    protected $fillable = [
-        'first_name',
-        'last_name',
-        'email',
-        'password',
-        'date_of_birth',
-        'passport_expiry_date',
+    protected $guarded = [
+        'id', // Primary key should usually be guarded
     ];
 
     // Optionally, define the hidden fields, such as the password
     protected $hidden = [
         'password',
     ];
+
+    // Define the relationship with flight
+    public function flight()
+    {
+        return $this->belongsTo(Flight::class);
+    }
 }

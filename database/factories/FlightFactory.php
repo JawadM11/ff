@@ -4,7 +4,6 @@ namespace Database\Factories;
 
 use App\Models\Flight;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Str;
 
 class FlightFactory extends Factory
 {
@@ -26,8 +25,8 @@ class FlightFactory extends Factory
             'number' => $this->faker->unique()->regexify('[A-Z]{2}[0-9]{4}'),
             'departure_city' => $this->faker->city,
             'arrival_city' => $this->faker->city,
-            'departure_time' => $this->faker->dateTimeBetween('now', '+1 month'),
-            'arrival_time' => $this->faker->dateTimeBetween('+1 month', '+2 months'),
+            'departure_time' => $departureTime = $this->faker->dateTimeBetween('now', '+1 month'),
+            'arrival_time' => $this->faker->dateTimeBetween($departureTime, $departureTime->modify('+1 day')),
         ];
     }
 }
