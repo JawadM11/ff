@@ -21,12 +21,21 @@ class FlightFactory extends Factory
      */
     public function definition()
     {
+        $departureTime = $this->faker->dateTimeBetween('now', '+1 month');
+        
+        
+        $flightDurationHours = $this->faker->numberBetween(1, 24); 
+        
+        
+        $arrivalTime = clone $departureTime;
+        $arrivalTime->modify("+$flightDurationHours hours");
+
         return [
             'number' => $this->faker->unique()->regexify('[A-Z]{2}[0-9]{4}'),
             'departure_city' => $this->faker->city,
             'arrival_city' => $this->faker->city,
-            'departure_time' => $departureTime = $this->faker->dateTimeBetween('now', '+1 month'),
-            'arrival_time' => $this->faker->dateTimeBetween($departureTime, $departureTime->modify('+1 day')),
+            'departure_time' => $departureTime,
+            'arrival_time' => $arrivalTime,
         ];
     }
 }

@@ -9,19 +9,11 @@ class Flight extends Model
 {
     use HasFactory;
 
-    // Define the fields that are mass assignable
-    protected $fillable = [
-        'number',
-        'departure_city',
-        'arrival_city',
-        'departure_time',
-        'arrival_time',
-    ];
+    protected $guarded = [];
 
-    // Define the relationship with passengers
     public function passengers()
     {
-        return $this->hasMany(Passenger::class);
+        return $this->belongsToMany(Passenger::class);
     }
 }
 
