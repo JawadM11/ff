@@ -29,7 +29,8 @@ class PassengerFactory extends Factory
             'password' => bcrypt($this->faker->password()), // Generate a hashed password using Faker's password method
             'date_of_birth' => $this->faker->date(),
             'passport_expiry_date' => $this->faker->dateTimeBetween('now', '+10 years')->format('Y-m-d'),
-            'remember_token' => Str::random(10),
+            
+
         ];
     }
 

@@ -20,8 +20,8 @@ class Passenger extends Model
     ];
 
     // Define the relationship with flight
-    public function flight()
+    public function flights()
     {
-        return $this->belongsToMany(Flight::class);
+        return $this->belongsToMany(Flight::class, 'flight_passenger');
     }
 }

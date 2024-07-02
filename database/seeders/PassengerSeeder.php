@@ -4,7 +4,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use App\Models\Passenger;
 
-class PassengersTableSeeder extends Seeder
+class PassengerSeeder extends Seeder
 {
     /**
      * Run the database seeds.

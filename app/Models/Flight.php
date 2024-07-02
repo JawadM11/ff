@@ -13,7 +13,7 @@ class Flight extends Model
 
     public function passengers()
     {
-        return $this->belongsToMany(Passenger::class);
+        return $this->belongsToMany(Passenger::class, 'flight_passenger');
     }
 }
 
