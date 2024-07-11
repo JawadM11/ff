@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PassengerController;
 use App\Http\Controllers\FlightController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\SomeController;
 
 
 /*
@@ -44,3 +46,18 @@ Route::put('/users/{id}', [UserController::class, 'update']);
 Route::delete('/users/{id}', [UserController::class, 'destroy']);
 
 
+
+Route::post('/register', [AuthController::class, 'register']);
+Route::post('/login', [AuthController::class, 'login']);
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/logout', [AuthController::class, 'logout']);
+});
+
+Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
+    Route::get('/admin-route', [SomeController::class, 'adminMethod']);
+});
+
+Route::middleware(['auth:sanctum', 'permission:create-posts'])->group(function () {
+    Route::post('/create-post', [SomeController::class, 'createPost']);
+});
