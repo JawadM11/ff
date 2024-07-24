@@ -3,38 +3,33 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
+use App\Models\User;
+use App\Models\Role;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
+use Spatie\Permission\Models\Role;
 
 class UsersSeeder extends Seeder
 {
     public function run()
     {
-        // Create users
-        $adminUserId = DB::table('users')->insertGetId([
+        
+        $adminUser = User::create([
             'name' => 'Admin User',
             'email' => 'admin@example.com',
             'password' => Hash::make('password'),
-            'created_at' => now(),
-            'updated_at' => now(),
         ]);
 
-        $normalUserId = DB::table('users')->insertGetId([
+        $normalUser = User::create([
             'name' => 'Normal User',
             'email' => 'user@example.com',
             'password' => Hash::make('password'),
-            'created_at' => now(),
-            'updated_at' => now(),
         ]);
 
-        // Assign roles to users
-        $adminRoleId = DB::table('roles')->where('name', 'Admin')->first()->id;
-        $userRoleId = DB::table('roles')->where('name', 'User')->first()->id;
-
-        DB::table('role_user')->insert([
-            ['user_id' => $adminUserId, 'role_id' => $adminRoleId, 'created_at' => now(), 'updated_at' => now()],
-            ['user_id' => $normalUserId, 'role_id' => $userRoleId, 'created_at' => now(), 'updated_at' => now()],
-        ]);
+        
+        $adminRole = Role::findByName('admin');
+        $userRole = Role::findByName('user');
+        
+        $adminUser->assignRole($adminRole);
+        $normalUser->assignRole($userRole);
     }
 }

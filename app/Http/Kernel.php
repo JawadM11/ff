@@ -1,10 +1,15 @@
 <?php
 
-namespace App\Http;
+namespace App\Console;
 
-use Illuminate\Foundation\Http\Kernel as HttpKernel;
+use Illuminate\Console\Scheduling\Schedule;
+use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use App\Models\Flight;
+use App\Mail\FlightReminderMail;
+use Illuminate\Support\Facades\Mail;
 
-class Kernel extends HttpKernel
+
+class Kernel extends ConsoleKernel
 {
     /**
      * The application's global HTTP middleware stack.
@@ -66,8 +71,37 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
     ];
     protected $routeMiddleware = [
-        // ...
-        'role' => \App\Http\Middleware\CheckRole::class,
+        
+        'role' => \Spatie\Permission\Middleware\RoleMiddleware::class,
+        'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
     ];
-    
+    protected function schedule(Schedule $schedule)
+{
+    $schedule->call(function () {
+        $flights = Flight::where('departure_time', '>=', now()->addHours(24))
+                         ->where('departure_time', '<', now()->addHours(25))
+                         ->with('passengers')
+                         ->get();
+
+        foreach ($flights as $flight) {
+            foreach ($flight->passengers as $passenger) {
+                Mail::to($passenger->email)->send(new FlightReminderMail($flight));
+            }
+        }
+    })->daily();
+    /**
+     * Register the commands for the application.
+     *
+     * @return void
+     */
+    protected function commands()
+    {
+        $this->load(__DIR__.'/Commands');
+
+        require base_path('routes/console.php');
+    }
 }
+
+}
+    
+

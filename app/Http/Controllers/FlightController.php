@@ -4,54 +4,73 @@ namespace App\Http\Controllers;
 
 use App\Models\Flight;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+use Spatie\QueryBuilder\QueryBuilder;
+use Spatie\QueryBuilder\AllowedFilter;
 
 class FlightController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Flight::query();
+        $query = QueryBuilder::for(Flight::class)
+            ->allowedFilters([
+                'flight_number', 
+                'destination',
+                AllowedFilter::exact('status'), 
+            ])
+            ->allowedSorts([
+                'flight_number', 
+                'created_at', 
+            ]);
 
-       
-        if ($request->has('filter')) {
-           
-        }
-
-        
-        if ($request->has('sort')) {
-            
-        }
-
-        return $query->paginate(10); 
+        return response()->json(['success' => true, 'data' => $query->paginate(10)]);
     }
 
-    public function show($id)
+    public function show(Flight $flight)
     {
-        return Flight::findOrFail($id);
+        return response()->json(['success' => true, 'data' => $flight->load('passengers')]);
     }
 
     public function store(Request $request)
     {
-        return Flight::create($request->all());
+        $validator = Validator::make($request->all(), [
+            'flight_number' => 'required|string|max:255',
+            'destination' => 'required|string|max:255',
+            'departure_time' => 'required|date',
+            
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['success' => false, 'errors' => $validator->errors()], 422);
+        }
+
+        $flight = Flight::create($request->all());
+
+        return response()->json(['success' => true, 'data' => $flight], 201);
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, Flight $flight)
     {
-        $flight = Flight::findOrFail($id);
+        $validator = Validator::make($request->all(), [
+            'flight_number' => 'sometimes|required|string|max:255',
+            'destination' => 'sometimes|required|string|max:255',
+            'departure_time' => 'sometimes|required|date',
+            
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['success' => false, 'errors' => $validator->errors()], 422);
+        }
+
         $flight->update($request->all());
 
-        return $flight;
+        return response()->json(['success' => true, 'data' => $flight]);
     }
 
-    public function destroy($id)
+    public function destroy(Flight $flight)
     {
-        Flight::destroy($id);
+        $flight->delete();
 
-        return response()->json(['message' => 'Flight deleted']);
-    }
-
-    public function passengers($flightId)
-    {
-        $flight = Flight::findOrFail($flightId);
-        return $flight->passengers()->paginate(10); 
+        return response()->json(['success' => true, 'message' => 'Flight deleted']);
     }
 }
