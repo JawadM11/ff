@@ -1,15 +1,10 @@
 <?php
 
-namespace App\Console;
+namespace App\Http;
 
-use Illuminate\Console\Scheduling\Schedule;
-use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
-use App\Models\Flight;
-use App\Mail\FlightReminderMail;
-use Illuminate\Support\Facades\Mail;
+use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
-
-class Kernel extends ConsoleKernel
+class Kernel extends HttpKernel
 {
     /**
      * The application's global HTTP middleware stack.
@@ -27,6 +22,8 @@ class Kernel extends ConsoleKernel
         \App\Http\Middleware\TrimStrings::class,
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
     ];
+   
+    
 
     /**
      * The application's route middleware groups.
@@ -44,11 +41,10 @@ class Kernel extends ConsoleKernel
         ],
 
         'api' => [
-    \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
-    'throttle:api',
-    \Illuminate\Routing\Middleware\SubstituteBindings::class,
-],
-
+            \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
+            'throttle:api',
+            \Illuminate\Routing\Middleware\SubstituteBindings::class,
+        ],
     ];
 
     /**
@@ -69,39 +65,17 @@ class Kernel extends ConsoleKernel
         'signed' => \App\Http\Middleware\ValidateSignature::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
-    ];
-    protected $routeMiddleware = [
-        
         'role' => \Spatie\Permission\Middleware\RoleMiddleware::class,
         'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
     ];
-    protected function schedule(Schedule $schedule)
-{
-    $schedule->call(function () {
-        $flights = Flight::where('departure_time', '>=', now()->addHours(24))
-                         ->where('departure_time', '<', now()->addHours(25))
-                         ->with('passengers')
-                         ->get();
-
-        foreach ($flights as $flight) {
-            foreach ($flight->passengers as $passenger) {
-                Mail::to($passenger->email)->send(new FlightReminderMail($flight));
-            }
-        }
-    })->daily();
-    /**
-     * Register the commands for the application.
-     *
-     * @return void
-     */
-    protected function commands()
-    {
-        $this->load(__DIR__.'/Commands');
-
-        require base_path('routes/console.php');
-    }
-}
-
-}
+    protected $middleware = [
+        // ...
+        \App\Http\Middleware\SecureHeadersMiddleware::class,
+    ];
+    protected $middleware = [
+        // ...
+        \App\Http\Middleware\SanitizeInputMiddleware::class,
+    ];
     
-
+    
+}

@@ -2,10 +2,11 @@
 
 namespace App\Mail;
 
-use App\Models\Flight;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use App\Models\Flight;
 
 class FlightReminderMail extends Mailable
 {
@@ -13,16 +14,25 @@ class FlightReminderMail extends Mailable
 
     public $flight;
 
+    /**
+     * Create a new message instance.
+     *
+     * @param  \App\Models\Flight  $flight
+     * @return void
+     */
     public function __construct(Flight $flight)
     {
         $this->flight = $flight;
     }
 
+    /**
+     * Build the message.
+     *
+     * @return $this
+     */
     public function build()
     {
-        return $this->view('emails.flight_reminder')
-        ->with([
-            'flight' => $this->flight,
-        ]);
+        return $this->subject('Flight Reminder')
+                    ->view('emails.flight_reminder');
     }
 }

@@ -26,7 +26,7 @@ class PassengerFactory extends Factory
             'first_name' => $this->faker->firstName(),
             'last_name' => $this->faker->lastName(),
             'email' => $this->faker->unique()->safeEmail(),
-            'password' => bcrypt($this->faker->password()), // Generate a hashed password using Faker's password method
+            'password' => bcrypt($this->faker->password()), 
             'date_of_birth' => $this->faker->date(),
             'passport_expiry_date' => $this->faker->dateTimeBetween('now', '+10 years')->format('Y-m-d'),
             
