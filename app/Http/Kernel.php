@@ -13,18 +13,23 @@ class Kernel extends HttpKernel
      *
      * @var array<int, class-string|string>
      */
-    protected $middleware = [
-        // \App\Http\Middleware\TrustHosts::class,
+    
+      protected $middleware = [ 
+        \App\Http\Middleware\SecureHeadersMiddleware::class,
+        \App\Http\Middleware\SanitizeInputMiddleware::class,        
         \App\Http\Middleware\TrustProxies::class,
         \Illuminate\Http\Middleware\HandleCors::class,
         \App\Http\Middleware\PreventRequestsDuringMaintenance::class,
         \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
         \App\Http\Middleware\TrimStrings::class,
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
-    ];
-   
     
-
+    ];
+    /**
+     * The application's route middleware groups.
+     *
+     * @var array<string, array<int, class-string|string>>
+     */
     /**
      * The application's route middleware groups.
      *
@@ -54,7 +59,7 @@ class Kernel extends HttpKernel
      *
      * @var array<string, class-string|string>
      */
-    protected $middlewareAliases = [
+    protected $routeMiddleware = [
         'auth' => \App\Http\Middleware\Authenticate::class,
         'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
         'auth.session' => \Illuminate\Session\Middleware\AuthenticateSession::class,
@@ -67,15 +72,7 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'role' => \Spatie\Permission\Middleware\RoleMiddleware::class,
         'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
+        'auth:sanctum' => \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
     ];
-    protected $middleware = [
-        // ...
-        \App\Http\Middleware\SecureHeadersMiddleware::class,
-    ];
-    protected $middleware = [
-        // ...
-        \App\Http\Middleware\SanitizeInputMiddleware::class,
-    ];
-    
-    
-}
+
+    }

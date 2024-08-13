@@ -25,7 +25,7 @@ class PassengerController extends Controller
                 'created_at',
             ]);
 
-        return response()->json(['success' => true, 'data' => $query->paginate(10)]);
+        return response(['success' => true, 'data' => $query->paginate(10)]);
     }
 
     public function show(Passenger $passenger)
@@ -43,7 +43,7 @@ class PassengerController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['success' => false, 'errors' => $validator->errors()], 422);
+            return response(['success' => false, 'errors' => $validator->errors()], 422);
         }
 
         $passenger = Passenger::create($request->except('image'));
@@ -53,7 +53,7 @@ class PassengerController extends Controller
             $this->uploadImage($request, $passenger);
         }
 
-        return response()->json(['success' => true, 'data' => $passenger], 201);
+        return response(['success' => true, 'data' => $passenger], 201);
     }
 
     public function update(Request $request, Passenger $passenger)
@@ -66,7 +66,7 @@ class PassengerController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['success' => false, 'errors' => $validator->errors()], 422);
+            return response(['success' => false, 'errors' => $validator->errors()], 422);
         }
 
         $passenger->update($request->except('image'));
@@ -76,35 +76,35 @@ class PassengerController extends Controller
             $this->uploadImage($request, $passenger);
         }
 
-        return response()->json(['success' => true, 'data' => $passenger]);
+        return response(['success' => true, 'data' => $passenger]);
     }
 
     public function destroy(Passenger $passenger)
-    {
+{ 
+    if ($passenger->image) {
+    Storage::disk('public')->delete($passenger->image);
+    Storage::disk('public')->delete('thumbnails/' . basename($passenger->image));
+}
+
+$passenger->delete();
+
+return response(['success' => true, 'message' => 'Passenger deleted']);
+}
+
+private function uploadImage(Request $request, Passenger $passenger)
+{
+
+$image = $request->file('image');
+$imagePath = $image->store('images/passengers', 'public');
+
+
+$thumbnailPath = 'thumbnails/' . $image->hashName();
+$thumbnail = Image::make($image)->resize(150, 150);
+Storage::disk('public')->put($thumbnailPath, (string) $thumbnail->encode());
+
+
+$passenger->image = $imagePath;
+$passenger->save();}
         
-        if ($passenger->image) {
-            Storage::disk('public')->delete($passenger->image);
-            Storage::disk('public')->delete('thumbnails/' . basename($passenger->image));
-        }
-
-        $passenger->delete();
-
-        return response()->json(['success' => true, 'message' => 'Passenger deleted']);
-    }
-
-    private function uploadImage(Request $request, Passenger $passenger)
-    {
-        
-        $image = $request->file('image');
-        $imagePath = $image->store('images/passengers', 'public');
-
-        
-        $thumbnailPath = 'thumbnails/' . $image->hashName();
-        $thumbnail = Image::make($image)->resize(150, 150);
-        Storage::disk('public')->put($thumbnailPath, (string) $thumbnail->encode());
-
-        
-        $passenger->image = $imagePath;
-        $passenger->save();
-    }
+    
 }
