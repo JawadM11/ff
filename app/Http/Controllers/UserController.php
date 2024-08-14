@@ -10,7 +10,7 @@ class UserController extends Controller{
     public function index()
     {
         $users = User::all();
-        return response()->json($users);}
+        return response ($users);}
     
     public function store(Request $request)
     {
@@ -28,41 +28,41 @@ class UserController extends Controller{
             'address' => $request->address,
         ]);
 
-        return response()->json($user, 201);}
+        return response ($user, 201);}
 
     public function edit($id)
     {
         $user = User::find($id);
 
         if (!$user) {
-            return response()->json(['error' => 'User not found'], 404);
+            return response (['error' => 'User not found'], 404);
         }
 
-        return response()->json($user);
+        return response ($user);
     }
     public function show($id)
     {
         $user = User::findOrFail($id);
-        return response()->json($user);
+        return response ($user);
     }
     public function destroy($id)
     {
         $user = User::find($id);
 
         if (!$user) {
-            return response()->json(['error' => 'User not found'], 404);
+            return response (['error' => 'User not found'], 404);
         }
 
         $user->delete();
 
-        return response()->json(['message' => 'User deleted successfully']);
+        return response (['message' => 'User deleted successfully']);
     }
     public function update(Request $request, $id)
     {
         $user = User::find($id);
 
         if (!$user) {
-            return response()->json(['error' => 'User not found'], 404);
+            return response (['error' => 'User not found'], 404);
         }
 
         $user->update($request->only('name', 'email', 'password', 'address'));
@@ -73,8 +73,6 @@ class UserController extends Controller{
 
         $user->save();
 
-        return response()->json($user);
+        return response ($user);
     }
 }
-
-      

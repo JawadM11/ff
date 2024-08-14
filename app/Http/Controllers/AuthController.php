@@ -24,7 +24,7 @@ class AuthController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-        return response()->json(['message' => 'User registered successfully'], 201);
+        return response(['message' => 'User registered successfully'], 201);
     }
 
     public function login(Request $request)
@@ -35,20 +35,20 @@ class AuthController extends Controller
         ]);
 
         if (!Auth::attempt($request->only('email', 'password'))) {
-            return response()->json(['message' => 'Invalid login details'], 401);
+            return response(['message' => 'Invalid login details'], 401);
         }
 
         $user = Auth::user();
         $token = $user->createToken('auth_token')->plainTextToken;
 
-        return response()->json(['access_token' => $token, 'token_type' => 'Bearer']);
+        return response(['access_token' => $token, 'token_type' => 'Bearer']);
     }
 
     public function logout(Request $request)
     {
         $request->user()->currentAccessToken()->delete();
 
-        return response()->json(['message' => 'Logged out successfully']);
+        return response(['message' => 'Logged out successfully'])
     }
 }
 

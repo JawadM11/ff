@@ -30,7 +30,7 @@ class PassengerController extends Controller
 
     public function show(Passenger $passenger)
     {
-        return response()->json(['success' => true, 'data' => $passenger]);
+        return response(['success' => true, 'data' => $passenger]);
     }
 
     public function store(Request $request)
