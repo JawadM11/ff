@@ -75,4 +75,16 @@ class UserController extends Controller{
 
         return response ($user);
     }
+     /**
+     * Destroy all sessions for the authenticated user.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function destroySessions(Request $request)
+    {
+        $user = $request->user();
+        $user->destroyAllSessions();
+
+        return response(['message' => 'All sessions have been destroyed.']);
+    }
 }

@@ -10,6 +10,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Permission\Traits\HasRoles;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use OwenIt\Auditing\Auditable;
+use Illuminate\Support\Facades\Session;
+
+
 
 class User extends Authenticatable implements AuditableContract
 {
@@ -20,7 +23,7 @@ class User extends Authenticatable implements AuditableContract
      *
      * @var array<int, string>
      */
-    protected $fillable = [
+    protected $auditInclude = [
         'name',
         'email',
         'password',
@@ -44,4 +47,13 @@ class User extends Authenticatable implements AuditableContract
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+    /**
+     * Destroy all sessions for the user.
+     *
+     * @return void
+     */
+    public function destroyAllSessions()
+    {
+        Session::flush();
+    }
 }
